@@ -14,11 +14,11 @@ time gcloud dataproc jobs submit hadoop \
 --cluster=${CLUSTER_NAME} \
 --region=${REGION} \
 ${PROPERTIES_STRING} \
--- ${SOURCE_PATH} gs://${GCS_BUCKET}/${TGT_TERASORT_PATH}/"
+-- ${SOURCE_PATH} gs://${GCS_BUCKET}/${TGT_TERAVALIDATE_PATH}/"
 
 time gcloud dataproc jobs submit hadoop \
 --class org.apache.hadoop.examples.terasort.TeraSort \
 --cluster=${CLUSTER_NAME} \
 --region=${REGION} \
 ${PROPERTIES_STRING} \
--- ${SOURCE_PATH} gs://${GCS_BUCKET}/${TGT_TERASORT_PATH}/										
+-- ${SOURCE_PATH} gs://${GCS_BUCKET}/${TGT_TERAVALIDATE_PATH}/										

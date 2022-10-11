@@ -1,8 +1,5 @@
 # !/bin/bash
 
-# Creates a Dataproc cluster using an Autoscaling policy and a managed metastore for Hive.
-# Modify configurations as needed. It assumes all configurations are stored under a bucket that is named using the project_id
-
 ####################################################### CONFIGURATIONS START ###############################################################
 echo "Getting project configurations..."
 source project-config/PROJECT_IAM_CONFIG.sh

@@ -5,7 +5,7 @@
 
 ####################################################### CONFIGURATIONS START ###############################################################
 echo "Getting project configurations..."
-source PROJECT_IAM_CONFIG.sh
+source project-config/PROJECT_IAM_CONFIG.sh
 echo "Getting cluster configurations..."
 [[ -z $1 ]] && echo "Please specify a config file. Exiting..." &&  exit 1 
 [[ ! -f 'cluster-config/'$1 ]] && echo "Could not find config file. Please verify the name. Exiting..."  && exit 1

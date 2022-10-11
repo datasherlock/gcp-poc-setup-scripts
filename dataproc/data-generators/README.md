@@ -3,10 +3,10 @@
 - Modify the configurations as required
 - Save and close
 
-### Using teragen.sh
-./teragen.sh <num_of_rows> <cluster_name>
-./terasort.sh <source_path> <cluster_name>
-./teravalidate.sh <source_path> <cluster_name>
+### Executing the scripts
+- ./teragen.sh <num_of_rows> <cluster_name>
+- ./terasort.sh <source_path> <cluster_name>
+- ./teravalidate.sh <source_path> <cluster_name>
 
 
 #### Notes - 

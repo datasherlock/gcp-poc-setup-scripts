@@ -4,7 +4,8 @@
 - Configure the region, zone, service account details to be used for your clusters
 - Open CLUSTER_CONFIG_*.sh depending on your requirements
 - You may use the presets or modify the values to suit your requirements
+- You can even create new configuration files
 - Save and close the config files
 - Ensure all scripts have execute permissions
 - Ensure that the bucket name used in the script is created
-- Execute the command ```./dataproc_create_cluster.sh``` 
+- Execute the command ```./dataproc_create_cluster.sh <name of config file> <optional - name of cluster``` 

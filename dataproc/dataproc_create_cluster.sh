@@ -7,7 +7,26 @@
 echo "Getting project configurations..."
 source PROJECT_IAM_CONFIG.sh
 echo "Getting cluster configurations..."
-source CLUSTER_CONFIG.sh 
+[[ -z $1 ]] && echo "Please specify a config file. Exiting..." &&  exit 1 
+[[ ! -f 'cluster-config/'$1 ]] && echo "Could not find config file. Please verify the name. Exiting..."  && exit 1
+
+source cluster-config/$1
+
+echo "Successfully imported.."
+echo DATAPROC_OPTIONAL_COMPONENTS=$DATAPROC_OPTIONAL_COMPONENTS
+echo DATAPROC_SCALING_POLICY=$DATAPROC_SCALING_POLICY
+echo DATAPROC_METASTORE=$DATAPROC_METASTORE
+echo DATAPROC_INITIALISATION_SCRIPTS=$DATAPROC_INITIALISATION_SCRIPTS
+echo DATAPROC_PROPERTIES=$DATAPROC_PROPERTIES
+echo MASTER_MACHINE_TYPE=$MASTER_MACHINE_TYPE
+echo MASTER_BOOT_DISK_GB=$MASTER_BOOT_DISK_GB
+echo MASTER_LOCAL_SSD_NUM=$MASTER_LOCAL_SSD_NUM
+echo WORKER_MACHINE_TYPE=$WORKER_MACHINE_TYPE
+echo WORKER_BOOT_DISK=$WORKER_BOOT_DISK
+echo WORKER_LOCAL_SSD_NUM=$WORKER_LOCAL_SSD_NUM
+echo WORKER_PRIMARY_CNT=$WORKER_PRIMARY_CNT
+echo WORKER_SECONDARY_CNT=$WORKER_SECONDARY_CNT 
+echo SERVICE_ACCOUNT=$SERVICE_ACCOUNT
 
 ####################################################### CONFIGURATIONS END ###############################################################
 
@@ -18,7 +37,7 @@ source CLUSTER_CONFIG.sh
 [[ -z "$DATAPROC_SCALING_POLICY" ]] && SCALING_POLICY_STRING="" || SCALING_POLICY_STRING="--autoscaling-policy ${DATAPROC_SCALING_POLICY}"
 [[ -z "$DATAPROC_INITIALISATION_SCRIPTS" ]] && INIT_STRING="" || INIT_STRING="--initialization-actions ${DATAPROC_INITIALISATION_SCRIPTS}"
 [[ -z "$DATAPROC_OPTIONAL_COMPONENTS" ]] && OPT_COMP_STRING="" || OPT_COMP_STRING="--optional-components ${DATAPROC_OPTIONAL_COMPONENTS}"
-[[ -z $1 ]] && CLUSTER_NAME='poc-cluster-'$(uuidgen) || CLUSTER_NAME=$1
+[[ -z $2 ]] && CLUSTER_NAME='poc-cluster-'`date '+%Y%m%d%H%M%S'` || CLUSTER_NAME=$2
 
 ####################################################### VALIDATIONS END ###############################################################
 echo "Creating cluster using the command - "

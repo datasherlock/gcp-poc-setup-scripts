@@ -14,5 +14,4 @@ export GCS_BUCKET=${PROJECT}
 # IAM
 export SERVICE_ACCOUNT=${PROJECT_NUMBER}-compute@developer.gserviceaccount.com
 
-echo SERVICE_ACCOUNT=$SERVICE_ACCOUNT
 

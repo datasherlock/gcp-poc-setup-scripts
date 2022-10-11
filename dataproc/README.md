@@ -8,4 +8,4 @@
 - Save and close the config files
 - Ensure all scripts have execute permissions
 - Ensure that the bucket name used in the script is created
-- Execute the command ```./dataproc_create_cluster.sh <name of config file> <optional - name of cluster``` 
+- Execute the command ```./dataproc_create_cluster.sh <name of config file> <optional - name of cluster>``` 

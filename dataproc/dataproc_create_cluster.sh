@@ -22,7 +22,8 @@ echo WORKER_MACHINE_TYPE=$WORKER_MACHINE_TYPE
 echo WORKER_BOOT_DISK=$WORKER_BOOT_DISK
 echo WORKER_LOCAL_SSD_NUM=$WORKER_LOCAL_SSD_NUM
 echo WORKER_PRIMARY_CNT=$WORKER_PRIMARY_CNT
-echo WORKER_SECONDARY_CNT=$WORKER_SECONDARY_CNT 
+echo WORKER_SECONDARY_CNT=$WORKER_SECONDARY_CNT
+echo WORKER_SECONDARY_LOCAL_SSD_NUM = $WORKER_SECONDARY_LOCAL_SSD_NUM
 echo SERVICE_ACCOUNT=$SERVICE_ACCOUNT
 
 ####################################################### CONFIGURATIONS END ###############################################################
@@ -51,6 +52,8 @@ gcloud dataproc clusters create ${CLUSTER_NAME} \
 --worker-machine-type ${WORKER_MACHINE_TYPE} \
 --worker-boot-disk-size ${WORKER_BOOT_DISK} \
 --num-worker-local-ssds ${WORKER_LOCAL_SSD_NUM} \
+--num-secondary-workers=${WORKER_SECONDARY_CNT} \
+--num-secondary-worker-local-ssds=${WORKER_SECONDARY_LOCAL_SSD_NUM} \
 --image-version ${DATAPROC_IMAGE_VERSION} \
 --service-account=${SERVICE_ACCOUNT} \
 --project $PROJECT \
@@ -72,6 +75,8 @@ gcloud dataproc clusters create ${CLUSTER_NAME} \
 --worker-machine-type ${WORKER_MACHINE_TYPE} \
 --worker-boot-disk-size ${WORKER_BOOT_DISK} \
 --num-worker-local-ssds ${WORKER_LOCAL_SSD_NUM} \
+--num-secondary-workers=${WORKER_SECONDARY_CNT} \
+--num-secondary-worker-local-ssds=${WORKER_SECONDARY_LOCAL_SSD_NUM} \
 --image-version ${DATAPROC_IMAGE_VERSION} \
 --service-account=${SERVICE_ACCOUNT} \
 --project $PROJECT \

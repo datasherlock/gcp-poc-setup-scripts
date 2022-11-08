@@ -1,0 +1,18 @@
+gcloud dataproc batches submit spark \
+ -—project=$(gcloud info --format='value(config.project)') \
+ -—region=us-central1 \
+ -—jars=file:///usr/lib/spark/examples/jars/spark-examples.jar \
+ -—class=org.apache.spark.examples.SparkPi \
+ —- 1000
+
+ gcloud beta dataproc batches submit --project hive-project-347910 --region us-central1 spark --batch batch-df03 --class org.apache.spark.examples.SparkPi 10000
+
+
+  gcloud dataproc batches submit spark \
+    --region=us-central1 \
+    --jars=file:///usr/lib/spark/examples/jars/spark-examples.jar \
+    --class=org.apache.spark.examples.SparkPi \
+     --service-account=dataproc-sa@datasherlock.iam.gserviceaccount.com \
+     --project="datasherlock" \
+     --labels purpose=dataproc-serverless-sparkpi,arg=100000000 \
+    -- 100000000

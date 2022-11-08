@@ -12,6 +12,6 @@ export PROJECT_NUMBER=$(gcloud projects describe ${PROJECT} --format="value(proj
 export GCS_BUCKET=${PROJECT}
 
 # IAM
-export SERVICE_ACCOUNT=${PROJECT_NUMBER}-compute@developer.gserviceaccount.com
+export SERVICE_ACCOUNT=dataproc-sa@datasherlock.iam.gserviceaccount.com
 
 

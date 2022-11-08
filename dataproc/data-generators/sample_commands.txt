@@ -16,3 +16,10 @@ gcloud dataproc batches submit spark \
      --project="datasherlock" \
      --labels purpose=dataproc-serverless-sparkpi,arg=100000000 \
     -- 100000000
+
+  gcloud dataproc jobs submit pyspark \
+  --cluster poc-cluster \
+  --region us-central1 \
+  --properties=spark.executor.cores=1,spark.executor.memory=5g,spark.dynamicAllocation.enabled=true \
+  gs://datasherlock/code/pyspark_demo.py \
+  -- 10000000 gs://datasherlock/test_data

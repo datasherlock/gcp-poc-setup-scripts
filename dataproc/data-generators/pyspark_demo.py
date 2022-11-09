@@ -41,12 +41,7 @@ def generate_df(rows):
     # Create SparkSession 
     d1 = datetime.strptime('1/1/1900 1:30 PM', '%m/%d/%Y %I:%M %p')
     d2 = datetime.strptime('1/1/2009 4:50 AM', '%m/%d/%Y %I:%M %p')
-    columns = StructType([StructField('firstname', StringType(), False),
-            StructField('middlename', StringType(), False),
-            StructField('lastname', StringType(), False),
-            StructField('dob', StringType(), False),
-            StructField('gender', StringType(), False),
-            StructField('salary', IntegerType(), False)])
+    
 
     df = spark.range(1, rows)
     
@@ -62,19 +57,24 @@ def generate_df(rows):
             .withColumn('lastname',generate_random_string_udf(lit(5))) \
                 .withColumn('dob',random_date_udf(lit(d1), lit(d2))) \
                     .withColumn('gender',generate_random_gender_udf(lit(0))) \
-                        .withColumn('salary', rand(1)*1000000)
+                        .withColumn('salary', rand(1)*1000000) \
+                            .withColumn("age", round(months_between(current_date(),to_timestamp("dob"))/12,0))
     return df
 
+def generatePathSuffix():
+    date = datetime.strptime(str(datetime.now()), '%Y-%m-%d %H:%M:%S.%f')
+    suffix = str(date.year) + str(date.month) + str(date.day) + str(date.hour) + str(date.minute) + str(date.second)
+    return suffix
+
+def processArgs():
+    rows = int(sys.argv[1])
+    suffix = generatePathSuffix()
+    path = sys.argv[2] + "/" + suffix
+    return (rows,path)
 
 
- 
-
-rows = int(sys.argv[1])
-date = datetime.strptime(str(datetime.now()), '%Y-%m-%d %H:%M:%S.%f')
-suffix = str(date.year) + str(date.month) + str(date.day) + str(date.hour) + str(date.minute) + str(date.second)
-path = sys.argv[2] + "/" + suffix
+rows, path = processArgs()
 print("Generating " + str(rows) + " Rows")
 df = generate_df(rows)
-df_age = df.withColumn("age", months_between(current_date(),to_timestamp("dob"))/12)
-df_age.write.csv(path, compression="gzip", header='true')
+df.write.csv(path, compression="gzip", header='true')
 print("Created " + str(rows) + " Rows at " + path)

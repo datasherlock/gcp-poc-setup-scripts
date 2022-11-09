@@ -49,6 +49,10 @@ def generate_df(rows):
             StructField('salary', IntegerType(), False)])
 
     df = spark.range(1, rows)
+    
+    print("Before re-partitioning - " + str(df.rdd.getNumPartitions()))
+    df = df.repartition(100)
+    print("After re-partitioning - " + str(df.rdd.getNumPartitions()))
     generate_random_string_udf = udf(lambda x: generate_random_string(x))
     random_date_udf = udf(lambda x,y: random_date(x,y), DateType())
     generate_random_gender_udf = udf(lambda x : generate_random_gender())

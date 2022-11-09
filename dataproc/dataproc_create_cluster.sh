@@ -67,7 +67,6 @@ gcloud dataproc clusters create ${CLUSTER_NAME} \
 --enable-component-gateway \
 --region $REGION \
 --subnet default \
---zone $ZONE \
 --master-machine-type ${WORKER_MACHINE_TYPE} \
 --master-boot-disk-size ${MASTER_BOOT_DISK_GB} \
 --num-master-local-ssds ${MASTER_LOCAL_SSD_NUM} \

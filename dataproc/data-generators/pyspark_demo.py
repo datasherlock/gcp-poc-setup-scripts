@@ -76,5 +76,5 @@ path = sys.argv[2] + "/" + suffix
 print("Generating " + str(rows) + " Rows")
 df = generate_df(rows)
 df_age = df.withColumn("age", months_between(current_date(),to_timestamp("dob"))/12)
-df_age.write.csv(path, compression="gzip")
+df_age.write.csv(path, compression="gzip", header='true')
 print("Created " + str(rows) + " Rows at " + path)

@@ -42,11 +42,37 @@ gcloud dataproc jobs submit pyspark \
   gs://datasherlock/code/pyspark_demo.py \
   -- 1000000 gs://datasherlock/test_data
 
-gcloud dataproc jobs submit pyspark   --cluster poc-cluster-16   --region us-central1   --properties=spark.executor.cores=5,spark.executor.instances=8,spark.executor.memory=15g,spark.dynamicAllocation.enabled=false   gs://datasherlock/code/pyspark_process_agg_data.py -- gs://datasherlock/test_data/202211975917
-gcloud dataproc jobs submit pyspark   --cluster poc-cluster-16   --region us-central1   --properties=spark.executor.cores=5,spark.executor.instances=8,spark.executor.memory=15g,spark.dynamicAllocation.enabled=false   gs://datasherlock/code/pyspark_process_agg_data.py -- gs://datasherlock/test_data/202211975917
+gcloud dataproc jobs submit pyspark \
+  --cluster poc-cluster-16 \
+  --region us-central1 \
+  --properties=spark.dynamicAllocation.initialExecutors=8,spark.dynamicAllocation.maxExecutors=35,spark.dynamicAllocation.minExecutors=8,spark.dynamicAllocation.enabled=true,spark.dynamicAllocation.executorIdleTimeout=4800s,spark.dynamicAllocation.cachedExecutorIdleTimeout=4800s \
+  gs://datasherlock/code/pyspark_process_agg_data.py -- gs://datasherlock/test_data/202211975917
+
+
+gcloud dataproc jobs submit pyspark \
+  --cluster poc-cluster-highmem16 \
+  --region us-central1 \
+  --properties=spark.dynamicAllocation.initialExecutors=8,spark.dynamicAllocation.maxExecutors=35,spark.dynamicAllocation.minExecutors=8,spark.dynamicAllocation.enabled=true,spark.dynamicAllocation.executorIdleTimeout=4800s,spark.dynamicAllocation.cachedExecutorIdleTimeout=4800s \
+  gs://datasherlock/code/pyspark_process_agg_data.py -- gs://datasherlock/test_data/202211975917
+
+gcloud dataproc jobs submit pyspark \
+  --cluster poc-cluster-no-efm \
+  --region us-central1 \
+  --properties=spark.dynamicAllocation.initialExecutors=8,spark.dynamicAllocation.maxExecutors=35,spark.dynamicAllocation.minExecutors=8,spark.dynamicAllocation.enabled=true,spark.dynamicAllocation.executorIdleTimeout=4800s,spark.dynamicAllocation.cachedExecutorIdleTimeout=4800s \
+  gs://datasherlock/code/pyspark_process_agg_data.py -- gs://datasherlock/test_data/202211975917
+
+
+
+gcloud dataproc jobs submit pyspark   --cluster poc-cluster-16   --region us-central1   --properties=spark.executor.cores=5,spark.executor.instances=8,spark.executor.memory=15g,spark.dynamicAllocation.enabled=false   gs://datasherlock/code/pyspark_process_agg_data.py -- gs://datasherlock/test_data/202211975917 &
+gcloud dataproc jobs submit pyspark   --cluster poc-cluster-16   --region us-central1   --properties=spark.executor.cores=5,spark.executor.instances=8,spark.executor.memory=15g,spark.dynamicAllocation.enabled=false   gs://datasherlock/code/pyspark_process_agg_data.py -- gs://datasherlock/test_data/202211975917 &
+
+gcloud dataproc jobs submit pyspark   --cluster poc-cluster-highmem16   --region us-central1   --properties=spark.executor.cores=5,spark.executor.instances=8,spark.executor.memory=15g,spark.dynamicAllocation.enabled=false   gs://datasherlock/code/pyspark_process_agg_data.py -- gs://datasherlock/test_data/202211975917
 
 gcloud dataproc jobs submit pyspark   --cluster poc-cluster-no-efm   --region us-central1   --properties=spark.executor.cores=5,spark.executor.instances=8,spark.executor.memory=15g,spark.dynamicAllocation.enabled=false   gs://datasherlock/code/pyspark_process_agg_data.py -- gs://datasherlock/test_data/202211975917
 gcloud dataproc jobs submit pyspark   --cluster poc-cluster-no-efm   --region us-central1   --properties=spark.executor.cores=5,spark.executor.instances=8,spark.executor.memory=15g,spark.dynamicAllocation.enabled=false   gs://datasherlock/code/pyspark_process_agg_data.py -- gs://datasherlock/test_data/202211975917
 
-  gcloud dataproc clusters update poc-cluster-16 --region=us-central1 --num-secondary-workers=0 
+  gcloud dataproc clusters update poc-cluster-16 --region=us-central1 --num-workers=2
+  gcloud dataproc clusters update poc-cluster-16 --region=us-central1 --num-secondary-workers=0
+  gcloud dataproc clusters update poc-cluster-highmem16 --region=us-central1 --num-workers=2 
+  gcloud dataproc clusters update poc-cluster-no-efm --region=us-central1 --num-workers=2 
   gcloud dataproc clusters update poc-cluster-no-efm --region=us-central1 --num-secondary-workers=0

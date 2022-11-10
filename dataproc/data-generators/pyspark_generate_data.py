@@ -1,7 +1,8 @@
-#! /usr/bin/python
+#!/usr/bin/python
 
 """
- Sample command for Dataproc - gcloud dataproc jobs submit pyspark --cluster poc-cluster-efm --region us-central1 gs://bucket/code/pyspark_demo.py -- 10 gs://bucket/object
+ Author: Jerome Rajan
+ Usage: gcloud dataproc jobs submit pyspark --cluster poc-cluster-efm --region us-central1 gs://bucket/code/pyspark_generate_data.py -- 10 gs://bucket/object
  Generates a dataframe with schema as ["firstname","middlename","lastname","dob","gender","salary", "age"] and writes to specified path
 """
 

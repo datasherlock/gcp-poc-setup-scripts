@@ -24,6 +24,14 @@ gcloud dataproc batches submit spark \
   gs://datasherlock/code/pyspark_demo.py \
   -- 10000000 gs://datasherlock/test_data
 
+
+gcloud dataproc jobs submit pyspark \
+  --cluster poc-cluster \
+  --region us-central1 \
+  --properties=spark.executor.cores=5,spark.executor.instances=8,spark.executor.memory=15g,spark.dynamicAllocation.enabled=false \
+  gs://datasherlock/code/pyspark_process_agg_data.py -- gs://datasherlock/test_data/202211975917
+
+
 gcloud dataproc jobs submit pyspark \
   --cluster poc-cluster-16 \
   --region us-central1 \
@@ -58,8 +66,10 @@ gcloud dataproc jobs submit pyspark \
 gcloud dataproc jobs submit pyspark \
   --cluster poc-cluster-no-efm \
   --region us-central1 \
-  --properties=spark.dynamicAllocation.initialExecutors=8,spark.dynamicAllocation.maxExecutors=35,spark.dynamicAllocation.minExecutors=8,spark.dynamicAllocation.enabled=true,spark.dynamicAllocation.executorIdleTimeout=4800s,spark.dynamicAllocation.cachedExecutorIdleTimeout=4800s \
+  --properties=spark.executor.cores=5,spark.executor.memory=15g,spark.dynamicAllocation.initialExecutors=8,spark.dynamicAllocation.maxExecutors=35,spark.dynamicAllocation.minExecutors=8,spark.dynamicAllocation.enabled=true,spark.dynamicAllocation.executorIdleTimeout=4800s,spark.dynamicAllocation.cachedExecutorIdleTimeout=4800s \
   gs://datasherlock/code/pyspark_process_agg_data.py -- gs://datasherlock/test_data/202211975917
+
+  spark.executor.cores=1,spark.executor.memory=0.5g,spark.yarn.executor.memoryOverhead=0.38g
 
 
 
@@ -71,8 +81,56 @@ gcloud dataproc jobs submit pyspark   --cluster poc-cluster-highmem16   --region
 gcloud dataproc jobs submit pyspark   --cluster poc-cluster-no-efm   --region us-central1   --properties=spark.executor.cores=5,spark.executor.instances=8,spark.executor.memory=15g,spark.dynamicAllocation.enabled=false   gs://datasherlock/code/pyspark_process_agg_data.py -- gs://datasherlock/test_data/202211975917
 gcloud dataproc jobs submit pyspark   --cluster poc-cluster-no-efm   --region us-central1   --properties=spark.executor.cores=5,spark.executor.instances=8,spark.executor.memory=15g,spark.dynamicAllocation.enabled=false   gs://datasherlock/code/pyspark_process_agg_data.py -- gs://datasherlock/test_data/202211975917
 
-  gcloud dataproc clusters update poc-cluster-16 --region=us-central1 --num-workers=2
+  gcloud dataproc clusters update poc-cluster-16 --region=us-central1 --num-workers=5 --num-secondary-workers=1
+  gcloud dataproc clusters update poc-cluster-16 --region=us-central1 --autoscaling-policy demo-scaling-no-gdt
   gcloud dataproc clusters update poc-cluster-16 --region=us-central1 --num-secondary-workers=0
-  gcloud dataproc clusters update poc-cluster-highmem16 --region=us-central1 --num-workers=2 
+  gcloud dataproc clusters update poc-cluster-highmem16 --region=us-central1 --num-secondary-workers=0
   gcloud dataproc clusters update poc-cluster-no-efm --region=us-central1 --num-workers=2 
-  gcloud dataproc clusters update poc-cluster-no-efm --region=us-central1 --num-secondary-workers=0
+  gcloud dataproc clusters update poc-cluster-no-efm-highcapacity --region=us-central1 --num-secondary-workers=5
+  gcloud dataproc clusters update poc-cluster-16 --region=us-central1 --num-secondary-workers=5
+
+gcloud dataproc clusters update poc-n2d-standard-4-415013y --region=us-central1 --num-workers=3 --num-secondary-workers=9
+
+for i in {1..10};
+do
+gcloud dataproc jobs submit pyspark \
+  --cluster poc-cluster-no-efm-highcapacity \
+  --region us-central1 \
+  --properties=spark.executor.cores=5,spark.executor.memory=15g,spark.dynamicAllocation.initialExecutors=8,spark.dynamicAllocation.maxExecutors=35,spark.dynamicAllocation.minExecutors=8,spark.dynamicAllocation.enabled=true,spark.dynamicAllocation.executorIdleTimeout=4800s,spark.dynamicAllocation.cachedExecutorIdleTimeout=4800s \
+  gs://datasherlock/code/pyspark_process_agg_data.py -- gs://datasherlock/test_data/202211975917 &
+sleep 10
+done
+
+
+for i in {1..10};
+do
+gcloud dataproc jobs submit pyspark \
+  --cluster poc-cluster-16 \
+  --region us-central1 \
+  --properties=spark.executor.cores=5,spark.executor.memory=15g,spark.dynamicAllocation.initialExecutors=8,spark.dynamicAllocation.maxExecutors=35,spark.dynamicAllocation.minExecutors=8,spark.dynamicAllocation.enabled=true,spark.dynamicAllocation.executorIdleTimeout=4800s,spark.dynamicAllocation.cachedExecutorIdleTimeout=4800s \
+  gs://datasherlock/code/pyspark_process_agg_data.py -- gs://datasherlock/test_data/202211975917 &
+sleep 5
+done
+
+
+gcloud dataproc autoscaling-policies export demo-scaling --destination=saved-policy.yaml
+
+sed -i '/TEXT_TO_BE_REPLACED/c\This line is removed by the admin.'
+
+START_DATE=$(cat $TMP_FILE | grep -A 1 'state: PENDING' |  tail -n 1 | sed "s/.*'\(.*\)'.*/\1/" | cut -d "." -f1 | awk '{print $1"Z"}')
+
+
+sed "s/.*WORKER_MACHINE_TYPE.*/export WORKER_MACHINE_TYPE=${WORKER_MACHINE_TYPE}/g" cluster-config/benchmark_base_config.sh
+
+
+ gcloud dataproc clusters create poc-n2d-standard-4-4211y \
+ --enable-component-gateway --region us-central1 --subnet default --zone us-central1-a --master-machine-type n2d-standard-4 --master-boot-disk-size 100 --num-master-local-ssds 2 --num-workers 6 --worker-machine-type n2d-standard-4 --worker-boot-disk-size 100 --num-worker-local-ssds 2 --num-secondary-workers=6 --num-secondary-worker-local-ssds=0 --image-version 2.0.34-debian10 --service-account=dataproc-sa@datasherlock.iam.gserviceaccount.com --project datasherlock --optional-components JUPYTER,PRESTO  --properties dataproc:dataproc.monitoring.stackdriver.enable=true,dataproc:dataproc.logging.stackdriver.job.driver.enable=true,dataproc:dataproc.logging.stackdriver.job.yarn.container.enable=true  --initialization-actions gs://datasherlock/dataproc-init-scripts/change_to_local_ssd.sh
+
+gcloud compute ssh poc-n2d-standard-8-8111y-m --project=datasherlock --command 'yarn app -status application_1669112573896_0002'
+
+
+gcloud dataproc jobs submit pyspark \
+    --cluster poc-cluster-dominant-calculator \
+    --region us-central1 \
+    --properties=spark.executor.cores=3,spark.executor.instances=59,spark.executor.memory=9g,spark.dynamicAllocation.enabled=false \
+    gs://datasherlock/code/pyspark_process_agg_data.py -- gs://datasherlock/test_data/202211975917

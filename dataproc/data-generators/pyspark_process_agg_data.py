@@ -16,7 +16,7 @@ from datetime import datetime
 import sys
 from pyspark.sql.types import *
 import math
-
+import uuid
 
 spark = SparkSession \
     .builder \
@@ -28,9 +28,9 @@ def getBucketName(uri):
     return bucket
 
 def generatePathSuffix():
-    date = datetime.strptime(str(datetime.now()), '%Y-%m-%d %H:%M:%S.%f')
-    suffix = str(date.year) + str(date.month) + str(date.day) + str(date.hour) + str(date.minute) + str(date.second)
-    return suffix
+    #date = datetime.strptime(str(datetime.now()), '%Y-%m-%d %H:%M:%S.%f')
+    #suffix = str(date.year) + str(date.month) + str(date.day) + str(date.hour) + str(date.minute) + str(date.second)
+    return str(uuid.uuid1())
 
 def processArgs():
     src_path = sys.argv[1]
@@ -40,6 +40,14 @@ src_path = processArgs()
 suffix = generatePathSuffix()
 bucket_nm = getBucketName(src_path)
 df = spark.read.csv(src_path, inferSchema=True)
+print("Successfully read data from %s" %(bucket_nm))
+#print(" Partition count = %2d" %(df.rdd.getNumPartitions()))
+df = df.repartition(200)
+print("Data shuffle starting...")
+print(" Partition count = %2d" %(df.rdd.getNumPartitions()))
+df = df.repartition(100)
+print("Shuffling data again to force further shuffling!!")
+print(" Partition count = %2d" %(df.rdd.getNumPartitions()))
 df = df.withColumnRenamed("_c0","id") .withColumnRenamed("_c1","firstname") .withColumnRenamed("_c2","middlename") .withColumnRenamed("_c3","lastname") .withColumnRenamed("_c4","dob") .withColumnRenamed("_c5","gender") .withColumnRenamed("_c6","salary") .withColumnRenamed("_c7","age")
 df.createOrReplaceTempView("df")
 spark.sql("select round(age,0) as age, avg(salary) as avg_sal from df group by round(age,0)").createOrReplaceTempView("df_avg_sal_by_age")

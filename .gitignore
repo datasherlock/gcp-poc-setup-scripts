@@ -1,0 +1,10 @@
+dataproc/benchmark_results_1.csv
+dataproc/benchmark_results_disk_usage.csv
+dataproc/benchmark_results.csv
+dataproc/run_details_1.csv
+dataproc/run_details_disk_usage.csv
+dataproc/run_details.csv
+dataproc/data-generators/sample_commands.txt
+dataproc/data-generators/teragen-stack/from pyspark.sql import SparkSession.py
+dataproc/data-generators/teragen-stack/gcloud dataproc batches submit --project.md
+dataproc/data-generators/sample_commands.txt
